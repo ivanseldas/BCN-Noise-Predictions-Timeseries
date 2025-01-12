@@ -11,8 +11,9 @@ This project analyzes and forecasts noise levels in Barcelona, focusing on two m
 
 2. **A/B Analysis**:
    - Compare noise levels between 2020 and 2021 to identify significant differences.
+
      
-![image](https://github.com/user-attachments/assets/04ee981e-12fb-43d1-bf0e-3c022533b3c4)
+![image](https://github.com/user-attachments/assets/0bb6c886-3ebd-4205-a828-84005ac59333)
 
 ---
 
