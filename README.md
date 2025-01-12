@@ -5,13 +5,12 @@
 
 This project analyzes and forecasts noise levels in Barcelona, focusing on two main objectives:
 
-1. **Time Series Forecasting**:
-   - Predict future noise levels using historical data.
-   - Address the impact of COVID-19 on noise trends.
-
-2. **A/B Analysis**:
+1. **A/B Analysis**:
    - Compare noise levels between 2020 and 2021 to identify significant differences.
 
+2. **Time Series Forecasting**:
+   - Predict future noise levels using historical data.
+   - Address the impact of COVID-19 on noise trends.
      
 ![image](https://github.com/user-attachments/assets/0bb6c886-3ebd-4205-a828-84005ac59333)
 
