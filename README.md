@@ -7,7 +7,7 @@ This project analyzes and forecasts noise levels in Barcelona, focusing on two m
 
 1. **Time Series Forecasting**:
    - Predict future noise levels using historical data.
-   - Address the impact of COVID-19 on noise trends as a "black swan" event.
+   - Address the impact of COVID-19 on noise trends.
 
 2. **A/B Analysis**:
    - Compare noise levels between 2020 and 2021 to identify significant differences.
