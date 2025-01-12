@@ -40,11 +40,10 @@ We acknowledge and thank OPEN DATA BCN for making this data available to the pub
 
 2. **A/B Analysis**:
    - Statistical tests: t-tests, Mann-Whitney U.
-   - Visualizations: Heatmaps and comparative charts.
 
 ---
 
-## Results
+## Results [ONGOING]
 
 - **Forecasts**: Predictive insights for future noise levels.
 - **COVID Impact**: Quantified noise reduction during restrictions.
