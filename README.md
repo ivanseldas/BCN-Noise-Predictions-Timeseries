@@ -68,13 +68,3 @@ This project analyzes and forecasts noise levels in Barcelona, focusing on two m
 
 ---
 
-## Contributors
-
-- **Iván**: Project lead and data scientist.
-- [Add collaborators]
-
----
-
-## License
-
-This project is licensed under the [Insert License Name] License. See `LICENSE` for details.
