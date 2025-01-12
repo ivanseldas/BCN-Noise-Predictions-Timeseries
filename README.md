@@ -21,6 +21,8 @@ This project analyzes and forecasts noise levels in Barcelona, focusing on two m
 - Predict future noise trends for urban planning.
 - Evaluate the impact of COVID-19 on noise levels.
 - Compare pre- and post-COVID noise patterns.
+  
+![image](https://github.com/user-attachments/assets/ef0fc3ec-ef8a-4f18-b45a-59906ef6a02a)
 
 ---
 
