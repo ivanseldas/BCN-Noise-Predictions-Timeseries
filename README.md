@@ -24,11 +24,11 @@ This project analyzes and forecasts noise levels in Barcelona, focusing on two m
 
 ---
 
-## Dataset
+## Data Source
 
-- **Location**: Noise sensors across Barcelona (see heatmap).
-- **Data**: Noise levels (dB), timestamps, and sensor coordinates.
-- **Years**: 2020–2021.
+This project utilizes data from the **[Noise Monitoring Network](https://opendata-ajuntament.barcelona.cat/data/en/dataset/xarxasoroll-equipsmonitor-dades)** provided by **[OPEN DATA BCN](https://opendata-ajuntament.barcelona.cat/en/)**, the open data portal of Barcelona City Council. The dataset is publicly available and subject to the licensing terms outlined on their website.
+
+We acknowledge and thank OPEN DATA BCN for making this data available to the public.
 
 ---
 
