@@ -14,6 +14,8 @@ This project analyzes and forecasts noise levels in Barcelona, focusing on two m
 
 ## Objectives
 
+![image](https://github.com/user-attachments/assets/d60656c2-34c5-4312-8e2b-05163c169e7e)
+
 - Predict future noise trends for urban planning.
 - Evaluate the impact of COVID-19 on noise levels.
 - Compare pre- and post-COVID noise patterns.
