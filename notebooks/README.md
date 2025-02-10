@@ -33,10 +33,10 @@ The goal of this project is to analyze and predict noise levels in Barcelona usi
 
 ```mermaid
 graph TD
-    A[1. Data Collection] --> B[2. Raw Data in S3]
-    B --> C[3. ETL with AWS Glue]
-    C --> D[4. Clean Data in S3]
-    D --> E[5. EDA in SageMaker]
-    E --> F[6. Predictive Modeling]
-    F --> G[7. Visualization in QuickSight]
-    G --> H[8. Monitoring & Alerts]
+    A[1.Data Collection] --> B[2.Raw Data in S3]
+    B --> C[3.ETL with AWS Glue]
+    C --> D[4.Clean Data in S3]
+    D --> E[5.EDA in SageMaker]
+    E --> F[6.Predictive Modeling]
+    F --> G[7.Visualization in QuickSight]
+    G --> H[8.Monitoring & Alerts]
