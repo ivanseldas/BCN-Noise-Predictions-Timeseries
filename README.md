@@ -33,6 +33,8 @@ We acknowledge and thank OPEN DATA BCN for making this data available to the pub
 ---
 
 ## Data Structure
+
+```bash 
 barcelona-noise-prediction/
 │
 ├── data/
@@ -120,7 +122,7 @@ barcelona-noise-prediction/
 ├── .github/
 │   └── workflows/
 │       └── ci_cd.yml                    # Automatización de pruebas y despliegue
-
+```
 ---
 
 ## Methodology
