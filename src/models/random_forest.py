@@ -10,7 +10,7 @@ def train(X, y, params):
     model = RandomForestRegressor(**params, random_state=42)
     model.fit(X, y)
     preds = model.predict(X)
-    rmse = mean_squared_error(y, preds, squared=False)
+    rmse = mean_squared_error(y, preds)
     return model, rmse
 
 # -------------------------

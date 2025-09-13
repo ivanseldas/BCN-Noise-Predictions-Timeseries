@@ -1,8 +1,8 @@
 model:
-  order_p: 1
-  order_d: 0
-  order_q: 1
+  order_d: 2
+  order_p: 3
+  order_q: 0
+  seasonal_D: 1
   seasonal_P: 0
-  seasonal_D: 0
   seasonal_Q: 0
-  seasonal_s: 24
+  seasonal_s: 12
