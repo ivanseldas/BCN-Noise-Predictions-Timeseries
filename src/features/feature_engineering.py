@@ -200,5 +200,5 @@ if __name__ == "__main__":
     
     # Save features
     df_features.dropna(inplace=True)  # Drop rows with NaNs from lag/rolling features
-    df_features.iloc[:5000].to_parquet(PROCESSED_DIR / "sensor_496_processed.parquet")
+    df_features.to_parquet(PROCESSED_DIR / "sensor_496_processed.parquet")
     print(f"Features saved to {PROCESSED_DIR / 'sensor_496_processed.parquet'}")

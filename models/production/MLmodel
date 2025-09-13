@@ -1,0 +1,22 @@
+artifact_path: file:///home/ivanseldasp/ds_projects/5_bcn_noise_AB_testing_git/mlruns/879101503137809789/models/m-bc0ddcbbf9ab41ff960d17658c734c94/artifacts
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.9.21
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.6.1
+mlflow_version: 3.1.4
+model_id: m-bc0ddcbbf9ab41ff960d17658c734c94
+model_size_bytes: 939933
+model_uuid: m-bc0ddcbbf9ab41ff960d17658c734c94
+prompts: null
+run_id: 5d5ca04b2c52496ea08271cab079dd8e
+utc_time_created: '2025-09-13 13:50:37.393607'

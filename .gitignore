@@ -1,2 +1,15 @@
-*.pkl
+# Big artifacts
 mlruns/
+data/raw/
+data/interim/
+data/processed/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# venvs
+.venv/
+venv/
+env/
