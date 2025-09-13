@@ -28,7 +28,7 @@ jobs:
       # Run tests (if pytest or other tests exist)
       - name: Run tests
         run: |
-          pytest || echo "⚠️ No tests yet"
+          pytest || echo "No tests found"
 
   docker-build-push:
     runs-on: ubuntu-latest
