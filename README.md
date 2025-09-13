@@ -93,6 +93,27 @@ BCN-Noise_Predictions-Timeseries/
 └── LICENSE                      # Project license
 ```
 
+   - config/ (YAML config + loader)
+   - data/ (load, validate, preprocess)
+   - features/ (feature builders)
+   - models/ (train, tune, evaluate)
+   - tracking/ (MLflow helpers)
+
+### Run the simple pipeline
+
+This repository now includes a minimal, modular pipeline and local MLflow tracking.
+
+- Place raw CSV files under `data/raw/` (or set env var `BCN_DATA_RAW`).
+- Run the pipeline:
+
+```bash
+python run_pipeline.py
+```
+
+Outputs:
+- Artifacts (intermediate parquet, model) in `artifacts/`.
+- MLflow runs in `mlruns/` (open UI with `mlflow ui --backend-store-uri mlruns`).
+
 ## Methodology
 
 1. **Time Series Forecasting**:
