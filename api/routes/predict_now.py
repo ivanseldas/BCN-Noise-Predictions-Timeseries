@@ -5,11 +5,8 @@ from datetime import datetime, timedelta
 
 router = APIRouter(prefix="/predict_now")
 
-MODEL_NAME = "NoiseForecasting"
-MODEL_ALIAS = "production"
-
-# Load model from MLflow
-model = mlflow.pyfunc.load_model(f"models:/{MODEL_NAME}@{MODEL_ALIAS}")
+MODEL_PATH = "models/production"
+model = mlflow.pyfunc.load_model(MODEL_PATH)
 
 # Expected feature order
 FEATURE_ORDER = [

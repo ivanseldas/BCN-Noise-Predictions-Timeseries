@@ -1,18 +1,11 @@
-# Core libraries
-matplotlib==3.10.0
-numpy==2.2.3
-pandas==2.2.3
-scikit_learn==1.6.1
-scipy==1.15.1
-seaborn==0.13.2
-statsmodels==0.14.4
-great_expectations==0.15.51
-streamlit
-plotly
-fastapi
-uvicorn[standard]
-mlflow
-requests
-
-# Avoid not desired upgrades
---upgrade-strategy=only-if-needed
+fastapi==0.103.2
+uvicorn[standard]==0.24.0
+cloudpickle==3.0.0
+mlflow==3.1.4
+pandas==2.1.4
+numpy==1.26.4
+scikit-learn==1.6.1
+streamlit==1.29.0
+plotly==5.18.0
+requests==2.31.0
+psutil==6.1.1

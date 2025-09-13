@@ -4,11 +4,8 @@ import pandas as pd
 
 router = APIRouter(prefix="/predict")
 
-MODEL_NAME = "NoiseForecasting"
-MODEL_ALIAS = "production"
-
-# Load model from MLflow Registry
-model = mlflow.pyfunc.load_model(f"models:/{MODEL_NAME}@{MODEL_ALIAS}")
+MODEL_PATH = "models/production"
+model = mlflow.pyfunc.load_model(MODEL_PATH)
 
 # Expected feature order (must match training)
 FEATURE_ORDER = [
