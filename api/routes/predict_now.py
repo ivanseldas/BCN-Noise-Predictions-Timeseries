@@ -2,11 +2,12 @@ from fastapi import APIRouter
 import mlflow
 import pandas as pd
 from datetime import datetime, timedelta
+import joblib
 
 router = APIRouter(prefix="/predict_now")
 
-MODEL_PATH = "/app/models/production"
-model = mlflow.pyfunc.load_model(MODEL_PATH)
+MODEL_PATH = "/app/models/production/model.pkl"
+model = joblib.load(MODEL_PATH)
 
 # Expected feature order
 FEATURE_ORDER = [
