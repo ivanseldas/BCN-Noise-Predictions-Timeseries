@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 router = APIRouter(prefix="/predict_now")
 
-MODEL_PATH = "models/production"
+MODEL_PATH = "/app/models/production"
 model = mlflow.pyfunc.load_model(MODEL_PATH)
 
 # Expected feature order

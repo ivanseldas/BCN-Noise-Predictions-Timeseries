@@ -4,7 +4,7 @@ import pandas as pd
 
 router = APIRouter(prefix="/predict")
 
-MODEL_PATH = "models/production"
+MODEL_PATH = "/app/models/production"
 model = mlflow.pyfunc.load_model(MODEL_PATH)
 
 # Expected feature order (must match training)
