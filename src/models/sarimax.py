@@ -37,10 +37,9 @@ def train(X, y, params):
     results = model.fit(disp=False)
 
     preds = results.predict(start=0, end=len(y)-1, exog=exog)
-    rmse = mean_squared_error(y, preds)
 
     # Devolver modelo + métricas
-    return results, rmse
+    return results, preds
 
 
 def objective(trial, X, y):

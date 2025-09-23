@@ -52,3 +52,32 @@ jobs:
       # Push image to Docker Hub
       - name: Push Docker image
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/noise-forecasting:latest
+
+  deploy-cloud-run:
+    name: Deploy to Cloud Run
+    runs-on: ubuntu-latest
+    needs: docker-build-push
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}     # set in repo secrets
+      GCP_REGION: ${{ secrets.GCP_REGION }}             # e.g. europe-west1
+      CLOUD_RUN_SERVICE: noise-forecasting-frontend     # change if needed
+      IMAGE_URI: docker.io/ivanseldasp/noise-forecasting:latest
+      PORT: 8501                                        # change to 8000 if deploying FastAPI
+      CPU: 1
+      MEMORY: 1Gi
+      CONCURRENCY: 80
+      MIN_INSTANCES: 0
+      MAX_INSTANCES: 3
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Auth via Workload Identity Federation (recommended). Provide these secrets.
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}  # arn-like resource
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}  
