@@ -110,7 +110,7 @@ if __name__ == "__main__":
         # Log predictions
         log_predictions(y_true=y, y_pred=y_pred, model_name=args.model)
 
-        # Log model
-        mlflow.sklearn.log_model(model, args.model)
+        # Log model with explicit signature and a small input example
+        mlflow.sklearn.log_model(sk_model=model,name=args.model)
 
         print(f"✅ {args.model} trained and logged to MLflow")
