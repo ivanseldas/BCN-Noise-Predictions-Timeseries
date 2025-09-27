@@ -13,3 +13,6 @@ __pycache__/
 .venv/
 venv/
 env/
+
+# files
+feature_config.json

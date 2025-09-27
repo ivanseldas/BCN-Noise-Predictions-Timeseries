@@ -1,34 +1,41 @@
+# src/train.py
 import argparse, yaml, importlib, pandas as pd, numpy as np, mlflow
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 from sklearn.model_selection import TimeSeriesSplit
-from src.utils.paths import PROCESSED_DIR, CONFIGS_DIR
+from src.utils.paths import INTERIM_DIR, PROCESSED_DIR, CONFIGS_DIR
+from src.features.feature_engineering import build_features_with_hash
 
 # ---------- Helpers ----------
 def load_config(path):
+    """Load YAML configuration file."""
     try:
         with open(path, "r") as f:
             return yaml.safe_load(f)
     except FileNotFoundError:
         return None
 
-def load_data():
-    df = pd.read_parquet(PROCESSED_DIR / "sensor_496_processed.parquet")
-    y = df["Noise_db"].values
-    X = df.drop(columns=["Noise_db", "Id_Instal"]).values
-    return X, y
+
+def load_interim_data():
+    """Load raw interim dataset before feature engineering."""
+    return pd.read_parquet(INTERIM_DIR / "sensor_496.parquet")
+
 
 # --- Forecasting Metrics ---
 def mean_absolute_percentage_error(y_true, y_pred):
     return np.mean(np.abs((y_true - y_pred) / np.clip(y_true, 1e-8, None))) * 100
 
+
 def symmetric_mape(y_true, y_pred):
-    return 100 * np.mean(2 * np.abs(y_pred - y_true) / (np.abs(y_true) + np.abs(y_pred) + 1e-8))
+    return 100 * np.mean(2 * np.abs(y_pred - y_true) /
+                         (np.abs(y_true) + np.abs(y_pred) + 1e-8))
+
 
 def mean_absolute_scaled_error(y_true, y_pred):
     naive_forecast = y_true[:-1]
     mae_naive = mean_absolute_error(y_true[1:], naive_forecast)
     mae_model = mean_absolute_error(y_true, y_pred)
     return mae_model / mae_naive if mae_naive != 0 else np.inf
+
 
 def compute_metrics(y_true, y_pred):
     return {
@@ -39,24 +46,44 @@ def compute_metrics(y_true, y_pred):
         "mase": mean_absolute_scaled_error(y_true, y_pred),
     }
 
+
 # ---------- Main ----------
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model", required=True, help="Model name (gradient_boost, xgboost, prophet, lstm, sarimax)")
-    parser.add_argument("--mode", required=True, choices=["cv", "production"], help="Training mode: cv or production")
+    parser.add_argument("--model", required=True,
+                        help="Model name (gradient_boost, xgboost, prophet, lstm, sarimax)")
+    parser.add_argument("--mode", required=True, choices=["cv", "production"],
+                        help="Training mode: cv or production")
     args = parser.parse_args()
 
-    X, y = load_data()
+    # 1. Load config
     cfg = load_config(CONFIGS_DIR / f"model_{args.model}.yaml")
     params = cfg["model"] if cfg else {}
+
+    # 2. Load interim dataset
+    df = load_interim_data()
+
+    # 3. Build features + feature hash
+    df_features, feature_hash, feature_config = build_features_with_hash(df)
+    df_features.dropna(inplace=True)
+
+    # 4. Prepare X, y
+    y = df_features["Noise_db"].values
+    X = df_features.drop(columns=["Noise_db", "Id_Instal"]).values
+
+    # 5. Import model
     module = importlib.import_module(f"src.models.{args.model}")
 
+    # 6. Start MLflow experiment
     mlflow.set_experiment("Noise Forecasting")
 
     # ----------------- CV Mode -----------------
     if args.mode == "cv":
         with mlflow.start_run(run_name=f"{args.model}_cv", nested=False):
+            # Log params + feature info
             mlflow.log_params(params)
+            mlflow.log_param("feature_hash", feature_hash)
+            mlflow.log_dict(feature_config, "feature_config.json")
 
             tscv = TimeSeriesSplit(n_splits=3)
             all_metrics = []
@@ -71,35 +98,38 @@ if __name__ == "__main__":
 
                     metrics = compute_metrics(y_test, y_pred)
                     mlflow.log_metrics({f"{k}": v for k, v in metrics.items()})
-
                     all_metrics.append(metrics)
 
-                    print(
-                        f"[Fold {fold}] "
-                        + " | ".join([f"{k.upper()}={v:.3f}" for k, v in metrics.items()])
+                    print(f"[Fold {fold}] " + " | ".join(
+                        [f"{k.upper()}={v:.3f}" for k, v in metrics.items()])
                     )
 
-            # Compute averages across folds
-            avg_metrics = {f"cv_{k}": np.mean([m[k] for m in all_metrics]) for k in all_metrics[0]}
+            # Log averages
+            avg_metrics = {f"cv_{k}": np.mean([m[k] for m in all_metrics])
+                           for k in all_metrics[0]}
             mlflow.log_metrics(avg_metrics)
 
-            print(
-                f"✅ CV completed for {args.model}: "
-                + " | ".join([f"{k.upper()}={v:.3f}" for k, v in avg_metrics.items()])
-            )
+            print(f"✅ CV completed for {args.model}: " +
+                  " | ".join([f"{k.upper()}={v:.3f}" for k, v in avg_metrics.items()]))
 
     # ----------------- Production Mode -----------------
     elif args.mode == "production":
         with mlflow.start_run(run_name=f"{args.model}_production", nested=False):
+            # Log params + feature info
             mlflow.log_params(params)
+            mlflow.log_param("feature_hash", feature_hash)
+            mlflow.log_dict(feature_config, "feature_config.json")
 
-            # Train on the full dataset
+            # Train on full dataset
             model = module.train(X, y, params)
 
+            # Save processed dataset for traceability
+            save_path = PROCESSED_DIR / f"sensor_496_features_{feature_hash}.parquet"
+            df_features.to_parquet(save_path)
+            mlflow.log_artifact(save_path, artifact_path="features")
+
             # Log final model
-            mlflow.sklearn.log_model(sk_model=model, name=args.model)
+            mlflow.sklearn.log_model(sk_model=model, artifact_path=args.model)
 
-            # Mark run as production
             mlflow.set_tag("stage", "production")
-
-            print(f"✅ {args.model} trained on full dataset and logged to MLflow")
+            print(f"✅ {args.model} trained and logged with feature hash {feature_hash}")

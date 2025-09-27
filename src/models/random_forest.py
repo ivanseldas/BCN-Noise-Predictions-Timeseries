@@ -8,8 +8,7 @@ from sklearn.model_selection import TimeSeriesSplit, cross_val_score
 def train(X, y, params):
     model = RandomForestRegressor(**params)
     model.fit(X, y)
-    y_pred = model.predict(X)
-    return model, y_pred
+    return model
 
 
 # -------------------------

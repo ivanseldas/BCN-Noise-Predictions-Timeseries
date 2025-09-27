@@ -1,51 +1,62 @@
-# src/models/sarimax.py
 import numpy as np
 from sklearn.metrics import mean_squared_error
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 import warnings
-
 warnings.filterwarnings("ignore")
 
+class SarimaxWrapper:
+    def __init__(self, params):
+        self.params = params
+        self.model_ = None
+        self.results_ = None
+        self.train_len_ = None
 
+    def fit(self, X, y):
+        y = y.astype(float)
+        exog = X.astype(float) if X.shape[1] > 0 else None
+
+        self.train_len_ = len(y)
+
+        self.model_ = SARIMAX(
+            y,
+            exog=exog,
+            order=(
+                self.params.get("order_p", 1),
+                self.params.get("order_d", 0),
+                self.params.get("order_q", 1),
+            ),
+            seasonal_order=(
+                self.params.get("seasonal_P", 0),
+                self.params.get("seasonal_D", 0),
+                self.params.get("seasonal_Q", 0),
+                self.params.get("seasonal_s", 24),
+            ),
+            enforce_stationarity=False,
+            enforce_invertibility=False,
+        )
+        self.results_ = self.model_.fit(disp=False)
+        return self
+
+    def predict(self, X_test):
+        # start/end en base al train_len_
+        start = self.train_len_
+        end = self.train_len_ + len(X_test) - 1
+        exog = X_test.astype(float) if X_test.shape[1] > 0 else None
+        return self.results_.predict(start=start, end=end, exog=exog)
+
+
+# -------------------------
+# For Training
+# -------------------------
 def train(X, y, params):
-    """
-    Train a SARIMAX model with given params.
-    Casts y and X to float and uses safe param keys for MLflow logging.
-    """
-    # Endogenous: y | Exogenous: X
-    y = y.astype(float)
-    exog = X.astype(float) if X.shape[1] > 0 else None
-
-    # Usar los valores para el modelo
-    model = SARIMAX(
-        y,
-        exog=exog,
-        order=(
-            params.get("order_p", 1),
-            params.get("order_d", 0),
-            params.get("order_q", 1)
-        ),
-        seasonal_order=(
-            params.get("seasonal_P", 0),
-            params.get("seasonal_D", 0),
-            params.get("seasonal_Q", 0),
-            params.get("seasonal_s", 24)
-        ),
-        enforce_stationarity=False,
-        enforce_invertibility=False,
-    )
-    results = model.fit(disp=False)
-
-    preds = results.predict(start=0, end=len(y)-1, exog=exog)
-
-    # Devolver modelo + métricas
-    return results, preds
+    model = SarimaxWrapper(params)
+    return model.fit(X, y)
 
 
+# -------------------------
+# For Hyperparameter Tuning with Optuna
+# -------------------------
 def objective(trial, X, y):
-    """
-    Optuna objective for SARIMAX tuning.
-    """
     y = y.astype(float)
     exog = X.astype(float) if X.shape[1] > 0 else None
 
