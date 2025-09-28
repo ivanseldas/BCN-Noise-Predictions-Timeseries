@@ -4,11 +4,12 @@ from pydantic import BaseModel, Field
 import pandas as pd
 import pickle
 from typing import List
-import mlflow
 
 router = APIRouter(prefix="/predict_now")
 
 MODEL_PATH = "/app/models/production"
+# Load model.pkl (pickle)
+MODEL_PATH = "models/production/model.pkl"
 try:
     with open(MODEL_PATH, "rb") as f:
         model = pickle.load(f)
