@@ -1,8 +1,8 @@
 model:
-  colsample_bytree: 0.8
-  gamma: 0.0
-  learning_rate: 0.060000000000000005
-  max_depth: 8
-  min_child_weight: 10
+  colsample_bytree: 0.6
+  gamma: 1.0
+  learning_rate: 0.02
+  max_depth: 10
+  min_child_weight: 1
   n_estimators: 400
   subsample: 0.6

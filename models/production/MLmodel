@@ -1,4 +1,4 @@
-artifact_path: file:///home/ivanseldasp/ds_projects/5_bcn_noise_AB_testing_git/mlruns/879101503137809789/models/m-199c43d43b664bccb90ae9a4536fa498/artifacts
+artifact_path: file:///home/ivanseldasp/ds_projects/5_bcn_noise_AB_testing_git/mlruns/879101503137809789/models/m-d89667b9b68a463bbff528306faffa75/artifacts
 flavors:
   python_function:
     env:
@@ -14,9 +14,9 @@ flavors:
     serialization_format: cloudpickle
     sklearn_version: 1.6.1
 mlflow_version: 3.1.4
-model_id: m-199c43d43b664bccb90ae9a4536fa498
-model_size_bytes: 939644
-model_uuid: m-199c43d43b664bccb90ae9a4536fa498
+model_id: m-d89667b9b68a463bbff528306faffa75
+model_size_bytes: 3284349
+model_uuid: m-d89667b9b68a463bbff528306faffa75
 prompts: null
-run_id: 887503f2c6034d1aae89f408d35aa85d
-utc_time_created: '2025-09-23 09:28:43.484112'
+run_id: 7d68503ba2ee4bb59deb0e7cc2745f7f
+utc_time_created: '2025-09-28 10:26:13.003376'

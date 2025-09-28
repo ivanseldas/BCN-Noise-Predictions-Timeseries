@@ -4,6 +4,7 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error
 from sklearn.model_selection import TimeSeriesSplit
 from src.utils.paths import INTERIM_DIR, PROCESSED_DIR, CONFIGS_DIR
 from src.features.feature_engineering import build_features_with_hash
+from src.evaluation.metrics import compute_metrics
 
 # ---------- Helpers ----------
 def load_config(path):
@@ -18,33 +19,6 @@ def load_config(path):
 def load_interim_data():
     """Load raw interim dataset before feature engineering."""
     return pd.read_parquet(INTERIM_DIR / "sensor_496.parquet")
-
-
-# --- Forecasting Metrics ---
-def mean_absolute_percentage_error(y_true, y_pred):
-    return np.mean(np.abs((y_true - y_pred) / np.clip(y_true, 1e-8, None))) * 100
-
-
-def symmetric_mape(y_true, y_pred):
-    return 100 * np.mean(2 * np.abs(y_pred - y_true) /
-                         (np.abs(y_true) + np.abs(y_pred) + 1e-8))
-
-
-def mean_absolute_scaled_error(y_true, y_pred):
-    naive_forecast = y_true[:-1]
-    mae_naive = mean_absolute_error(y_true[1:], naive_forecast)
-    mae_model = mean_absolute_error(y_true, y_pred)
-    return mae_model / mae_naive if mae_naive != 0 else np.inf
-
-
-def compute_metrics(y_true, y_pred):
-    return {
-        "mae": mean_absolute_error(y_true, y_pred),
-        "rmse": mean_squared_error(y_true, y_pred),
-        "mape": mean_absolute_percentage_error(y_true, y_pred),
-        "smape": symmetric_mape(y_true, y_pred),
-        "mase": mean_absolute_scaled_error(y_true, y_pred),
-    }
 
 
 # ---------- Main ----------
@@ -105,7 +79,7 @@ if __name__ == "__main__":
                     )
 
             # Log averages
-            avg_metrics = {f"cv_{k}": np.mean([m[k] for m in all_metrics])
+            avg_metrics = {f"{k}": np.mean([m[k] for m in all_metrics])
                            for k in all_metrics[0]}
             mlflow.log_metrics(avg_metrics)
 
@@ -129,7 +103,7 @@ if __name__ == "__main__":
             mlflow.log_artifact(save_path, artifact_path="features")
 
             # Log final model
-            mlflow.sklearn.log_model(sk_model=model, artifact_path=args.model)
+            mlflow.sklearn.log_model(sk_model=model, name=args.model)
 
             mlflow.set_tag("stage", "production")
             print(f"✅ {args.model} trained and logged with feature hash {feature_hash}")
