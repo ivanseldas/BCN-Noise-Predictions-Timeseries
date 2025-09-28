@@ -3,10 +3,6 @@ name: CI/CD Pipeline
 on:
   push:
     branches: [ "main" ]
-    paths:
-      - "models/production/**"
-      - "dashboard/**"
-      - "api/**"
 
 jobs:
   build-test:

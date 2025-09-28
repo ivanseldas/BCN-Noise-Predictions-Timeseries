@@ -9,7 +9,11 @@ import mlflow
 router = APIRouter(prefix="/predict_now")
 
 MODEL_PATH = "/app/models/production"
-model = mlflow.pyfunc.load_model(MODEL_PATH)
+try:
+    with open(MODEL_PATH, "rb") as f:
+        model = pickle.load(f)
+except FileNotFoundError as e:
+    raise RuntimeError(f"Model pickle not found at {MODEL_PATH}. Export it first.") from e
 
 # Expected feature order
 FEATURE_ORDER = ['hour', 'day_of_week', 'month', 'year','Latitud', 'Longitud']
