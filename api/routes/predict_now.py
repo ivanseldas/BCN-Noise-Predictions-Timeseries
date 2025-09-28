@@ -4,28 +4,15 @@ from pydantic import BaseModel, Field
 import pandas as pd
 import pickle
 from typing import List
+import mlflow
 
 router = APIRouter(prefix="/predict_now")
 
-# Load model.pkl (pickle)
-MODEL_PATH = "models/production/model.pkl"
-try:
-    with open(MODEL_PATH, "rb") as f:
-        model = pickle.load(f)
-except FileNotFoundError as e:
-    raise RuntimeError(f"Model pickle not found at {MODEL_PATH}. Export it first.") from e
+MODEL_PATH = "/app/models/production"
+model = mlflow.pyfunc.load_model(MODEL_PATH)
 
 # Expected feature order
-FEATURE_ORDER = [
-    "hour", "day_of_week", "month", "year",
-    "Latitud", "Longitud", "is_weekend",
-    "Lockdown_During lockdown", "Lockdown_Post-lockdown", "Lockdown_Pre-lockdown",
-    "public_holiday",
-    "Noise_db_lag_1", "Noise_db_lag_24",
-    "Noise_db_roll_mean_3", "Noise_db_roll_std_3",
-    "Noise_db_roll_mean_24", "Noise_db_roll_std_24",
-    "sin_1", "cos_1", "sin_2", "cos_2"
-]
+FEATURE_ORDER = ['hour', 'day_of_week', 'month', 'year','Latitud', 'Longitud']
 
 # Pydantic schemas
 class PredictPoint(BaseModel):
@@ -53,21 +40,22 @@ def _build_frame(timestamps: List[datetime], lat: float, lon: float) -> pd.DataF
             "year": ts.year,
             "Latitud": float(lat),
             "Longitud": float(lon),
-            "is_weekend": 1 if ts.weekday() >= 5 else 0,
-            "Lockdown_During lockdown": 0,
-            "Lockdown_Post-lockdown": 0,
-            "Lockdown_Pre-lockdown": 0,
-            "public_holiday": 0,
-            "Noise_db_lag_1": 0,
-            "Noise_db_lag_24": 0,
-            "Noise_db_roll_mean_3": 0,
-            "Noise_db_roll_std_3": 0,
-            "Noise_db_roll_mean_24": 0,
-            "Noise_db_roll_std_24": 0,
-            "sin_1": 0,
-            "cos_1": 1,
-            "sin_2": 0,
-            "cos_2": 1
+            #"is_weekend": 1 if ts.weekday() >= 5 else 0,
+            #"Lockdown_During lockdown": 0,
+            #"Lockdown_Post-lockdown": 0,
+            #"Lockdown_Pre-lockdown": 0,
+            #"public_holiday": 0,
+            #"Noise_db_lag_1": 0,
+            #"Noise_db_lag_24": 0,
+            #"Noise_db_roll_mean_3": 0,
+            #"Noise_db_roll_std_3": 0,
+            #"Noise_db_roll_mean_24": 0,
+            #"Noise_db_roll_std_24": 0,
+            #"sin_1": 0,
+            #"cos_1": 1,
+            #"sin_2": 0,
+            #"cos_2": 1
+
         })
     df = pd.DataFrame(records)
     for col in FEATURE_ORDER:

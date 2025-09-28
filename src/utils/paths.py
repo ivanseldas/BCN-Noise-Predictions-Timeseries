@@ -15,9 +15,7 @@ PROCESSED_DIR = DATA_DIR / "processed"
 
 # Model paths
 MODEL_DIR = ROOT_DIR / "models"
-RANDOM_FOREST_MODEL_PATH = MODEL_DIR / "random_forest_model.joblib"
-XGBOOST_MODEL_PATH = MODEL_DIR / "xgboost_model.joblib"
-LSTM_MODEL_PATH = MODEL_DIR / "lstm_model.pth"
+PRODUCTION_DIR = MODEL_DIR / "production"
 
 # Config paths
 CONFIGS_DIR = ROOT_DIR / "src/configs"
