@@ -7,7 +7,7 @@ import plotly.graph_objects as go
 # --- Initial config ---
 st.set_page_config(page_title="Noise Forecasting Dashboard", layout="wide")
 
-st.title("📊 Noise Forecasting Dashboard")
+st.title("Noise Forecasting Dashboard")
 
 st.markdown(
     """
@@ -59,6 +59,17 @@ else:
             mode="lines",
             line=dict(color="blue"),
             name="Forecast"
+        )
+    )
+
+    # Hourly points (markers)
+    fig.add_trace(
+        go.Scatter(
+            x=df["datetime"],
+            y=df["prediction"],
+            mode="markers",
+            marker=dict(color="blue", size=6, symbol="circle"),
+            name="Hourly Predictions"
         )
     )
 
