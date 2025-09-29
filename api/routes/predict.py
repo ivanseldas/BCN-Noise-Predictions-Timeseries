@@ -1,11 +1,17 @@
 from fastapi import APIRouter
 import mlflow
 import pandas as pd
+import pickle
 
 router = APIRouter(prefix="/predict")
 
-MODEL_PATH = "/app/models/production"
-model = mlflow.pyfunc.load_model(MODEL_PATH)
+# --- Load model ---
+MODEL_PATH = "models/production/model.pkl"
+try:
+    with open(MODEL_PATH, "rb") as f:
+        model = pickle.load(f)
+except FileNotFoundError as e:
+    raise RuntimeError(f"Model pickle not found at {MODEL_PATH}. Export it first.") from e
 
 # Expected feature order (must match training)
 FEATURE_ORDER = [

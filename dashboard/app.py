@@ -1,44 +1,75 @@
+# dashboard/app.py
 import streamlit as st
 import requests
 import pandas as pd
-import plotly.express as px
+import plotly.graph_objects as go
 
+# --- Initial config ---
 st.set_page_config(page_title="Noise Forecasting Dashboard", layout="wide")
 
-st.title("Noise Forecasting in Barcelona")
-st.markdown("Noise levels predicted by the model in **MLflow Production**")
+st.title("📊 Noise Forecasting Dashboard")
 
-# ----------------------------------------
-# Section: Last 7 days predictions
-# ----------------------------------------
-st.subheader("Predicted Noise Levels - Last 7 Days")
+st.markdown(
+    """
+    This dashboard shows the **hourly noise level forecast** together with a 
+    **95% confidence interval**, based on the deployed model.
+    """
+)
 
-try:
-    response = requests.get("http://127.0.0.1:8000/predict_now/")
-    if response.status_code == 200:
-        result = response.json()
+# --- Call the API ---
+url = "http://localhost:8000/predict_now/"
+resp = requests.get(url)
 
-        # Convert predictions to DataFrame
-        df_week = pd.DataFrame(result["predictions"])
-        df_week["datetime"] = pd.to_datetime(df_week["datetime"])
+if resp.status_code != 200:
+    st.error(f"API error: {resp.text}")
+else:
+    data = resp.json()
+    df = pd.DataFrame(data["predictions"])
+    df["datetime"] = pd.to_datetime(df["datetime"])
 
-        # Line chart with Plotly
-        fig = px.line(
-            df_week,
-            x="datetime",
-            y="prediction",
-            title="Noise Level Predictions (dB) - Last 7 Days",
-            labels={"datetime": "Date", "prediction": "Noise (dB)"}
+    # --- Plotly chart ---
+    fig = go.Figure()
+
+    # Confidence Interval (shaded area)
+    fig.add_traces([
+        go.Scatter(
+            x=df["datetime"],
+            y=df["upper"],
+            mode="lines",
+            line=dict(width=0),
+            name="Upper Bound",
+            showlegend=False
+        ),
+        go.Scatter(
+            x=df["datetime"],
+            y=df["lower"],
+            mode="lines",
+            line=dict(width=0),
+            fill="tonexty",
+            fillcolor="rgba(0, 123, 255, 0.2)",  # light blue
+            name="Confidence Interval"
         )
-        fig.update_traces(mode="lines+markers")
+    ])
 
-        st.plotly_chart(fig, use_container_width=True)
+    # Forecast line
+    fig.add_trace(
+        go.Scatter(
+            x=df["datetime"],
+            y=df["prediction"],
+            mode="lines",
+            line=dict(color="blue"),
+            name="Forecast"
+        )
+    )
 
-        # Show summary
-        st.write(f"{result['total_points']} predictions from {result['start']} to {result['end']}")
+    # Layout
+    fig.update_layout(
+        title="Noise Forecast with 95% Confidence Interval",
+        xaxis_title="Datetime",
+        yaxis_title="Noise Level (dB)",
+        template="plotly_white",
+        hovermode="x unified",
+        legend=dict(orientation="h", y=-0.2, x=0.5, xanchor="center")
+    )
 
-    else:
-        st.error("Error calling FastAPI endpoint `/predict_now/`")
-
-except Exception as e:
-    st.error(f"Connection error with FastAPI: {e}")
+    st.plotly_chart(fig, use_container_width=True)
