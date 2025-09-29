@@ -5,7 +5,7 @@ import pandas as pd
 import plotly.graph_objects as go
 
 # --- Initial config ---
-st.set_page_config(page_title="Noise Forecasting Dashboard", layout="wide")
+st.set_page_config(page_title="Noise Forecasting Dashboard ", layout="wide")
 
 st.title("Noise Forecasting Dashboard")
 
