@@ -64,7 +64,7 @@ jobs:
       GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}     # set in repo secrets
       GCP_REGION: ${{ secrets.GCP_REGION }}             # e.g. europe-west1
       CLOUD_RUN_SERVICE: noise-forecasting-frontend     # change if needed
-      IMAGE_URI: docker.io/{{ secrets.DOCKERHUB_USERNAME }}/noise-forecasting:latest
+      IMAGE_URI: docker.io/ivanseldasp/noise-forecasting:latest
       PORT: 8501                                        # change to 8000 if deploying FastAPI
       CPU: 1
       MEMORY: 1Gi
