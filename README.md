@@ -4,7 +4,7 @@
 
 This project transforms real-time noise sensor data into short-term forecasts through a production-grade ML pipeline. Designed to support smart urban environments and guest-focused experiences, it combines robust time-series modeling with real-time APIs and dashboards.
 
-![image](https://github.com/user-attachments/assets/0bb6c886-3ebd-4205-a828-84005ac59333)
+![image](https://github.com/user-attachments/assets/b833be16-b936-4133-a35f-fc082f52df1f)
 
 ### What this project delivers:
 
@@ -17,6 +17,7 @@ This project transforms real-time noise sensor data into short-term forecasts th
 
 **Live Demo:** [Noise Forecasting App](https://noise-forecasting-frontend-924171883482.europe-west1.run.app/)
 
+![image](https://github.com/user-attachments/assets/0bb6c886-3ebd-4205-a828-84005ac59333)
 
 ---
 
