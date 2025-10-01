@@ -56,6 +56,9 @@ This project analyzes and forecasts noise levels in Barcelona, focusing on two m
   - Metrics: MAE, RMSE, relative improvement
 - MLflow for experiment tracking, comparison, and production model selection
 
+![image](https://github.com/user-attachments/assets/3ca35db1-d2ce-4f06-be47-37390870911c)
+*MLFlow Experiments saved locally for cost efficiency*
+
 ### 3. Serving & Visualization
 
 - **FastAPI**: Serves real-time predictions and backtesting summaries
@@ -76,6 +79,8 @@ This project analyzes and forecasts noise levels in Barcelona, focusing on two m
 
 - **Forecasts**: Predictive insights for future noise levels.
 - **COVID Impact**: Quantified noise reduction during restrictions.
+
+![image](https://github.com/user-attachments/assets/93c53fd7-30ea-4295-9168-a334f7c864b3)
 
 ---
 
