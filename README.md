@@ -70,7 +70,7 @@ This project analyzes and forecasts noise levels in Barcelona, focusing on two m
 - Containerized with Docker
 - CI/CD via GitHub Actions:
   - Automatically builds and pushes Docker images to DockerHub
-  - Deploys to **Google Cloud Run** (cost-effective and scalable)
+  - Deploys to **Google Cloud Run** (previously deployed to **AWS Fargate (ECS)** but discontinued for cost-efficiency)
 - Also adaptable to AWS/Azure infrastructure
 
 ---
