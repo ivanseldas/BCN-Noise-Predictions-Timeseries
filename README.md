@@ -1,16 +1,22 @@
 # BCN Noise Predictions Time Series
-This project presents a complete data science workflow applied to real-world urban sensor data. The goal is to predict short-term variations in environmental noise levels using time series modeling, robust feature engineering, and automated deployment. It simulates the development of a real-time service that could be integrated into applications involving forecasting, guest assistance, or smart city analytics.
 
-![image](https://github.com/user-attachments/assets/b833be16-b936-4133-a35f-fc082f52df1f)
+**What if your ML model could hear the city and predict its next move?**  
 
-## Overview
+This project transforms real-time noise sensor data into short-term forecasts through a production-grade ML pipeline. Designed to support smart urban environments and guest-focused experiences, it combines robust time-series modeling with real-time APIs and dashboards.
 
-- Build a modular and traceable pipeline for time series prediction using real data.
-- Train and evaluate ml models with backtesting strategies that reflect production constraints.
-- Deploy the system using FastAPI and Streamlit with cloud-native infrastructure (AWS and GCP).
-
-     
 ![image](https://github.com/user-attachments/assets/0bb6c886-3ebd-4205-a828-84005ac59333)
+
+### What this project delivers:
+
+- Forecasting of real-world urban noise using engineered temporal features
+- Modular pipeline with MLflow for experiment tracking and model governance
+- Time-aware backtesting with expanding window evaluation and baseline comparisons
+- FastAPI service for real-time predictions, and Streamlit dashboard for insights
+- CI/CD workflow with Docker and GitHub Actions, auto-deployed to **Google Cloud Run**
+- Built for cost-efficiency, observability, and portability across cloud platforms
+
+**Live Demo:** [Noise Forecasting App](https://noise-forecasting-frontend-924171883482.europe-west1.run.app/)
+
 
 ---
 
