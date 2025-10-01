@@ -1,12 +1,14 @@
 # BCN Noise Predictions Time Series
+This project presents a complete data science workflow applied to real-world urban sensor data. The goal is to predict short-term variations in environmental noise levels using time series modeling, robust feature engineering, and automated deployment. It simulates the development of a real-time service that could be integrated into applications involving forecasting, guest assistance, or smart city analytics.
+
 ![image](https://github.com/user-attachments/assets/b833be16-b936-4133-a35f-fc082f52df1f)
 
 ## Overview
 
-This project analyzes and forecasts noise levels in Barcelona, focusing on two main objectives:
+- Build a modular and traceable pipeline for time series prediction using real data.
+- Train and evaluate ml models with backtesting strategies that reflect production constraints.
+- Deploy the system using FastAPI and Streamlit with cloud-native infrastructure (AWS and GCP).
 
-   1. Predict future noise levels using historical data.
-   2. Address the impact of COVID-19 lockdown on noise trends.
      
 ![image](https://github.com/user-attachments/assets/0bb6c886-3ebd-4205-a828-84005ac59333)
 
@@ -14,104 +16,56 @@ This project analyzes and forecasts noise levels in Barcelona, focusing on two m
 
 ## Objectives
 
-- Predict future noise trends for urban planning.
-- Evaluate the impact of COVID-19 on noise levels.
-- Compare pre- and post-COVID noise patterns.
+This project analyzes and forecasts noise levels in Barcelona, focusing on two main objectives:
+
+   1. Predict future noise levels using historical data.
 
 ![image](https://github.com/user-attachments/assets/d60656c2-34c5-4312-8e2b-05163c169e7e)
+
+   2. Address the impact of COVID-19 lockdown on noise trends.
 
 ![image](https://github.com/user-attachments/assets/3d5b70ac-ebb1-441a-8cb6-d317e3c5c141)
 
 ---
 
-## Data Source
+## Key Components
 
-This project utilizes data from the **[Noise Monitoring Network](https://opendata-ajuntament.barcelona.cat/data/en/dataset/xarxasoroll-equipsmonitor-dades)** provided by **[OPEN DATA BCN](https://opendata-ajuntament.barcelona.cat/en/)**, the open data portal of Barcelona City Council. The dataset is publicly available and subject to the licensing terms outlined on their website.
+### 1. Data & Feature Pipeline
 
-We acknowledge and thank OPEN DATA BCN for making this data available to the public.
+- Data Source:  **[Noise Monitoring Network](https://opendata-ajuntament.barcelona.cat/data/en/dataset/xarxasoroll-equipsmonitor-dades)** provided by **[OPEN DATA BCN](https://opendata-ajuntament.barcelona.cat/en/)**, the open data portal of Barcelona City Council. 
+- Input: Noise sensor data (timestamp, location, dB levels)
+- Feature engineering:
+  - Temporal features: hour, weekday, month, weekend flag
+  - Cyclical encoding (sin/cos)
+  - Lag features (1h, 24h), rolling statistics (3h, 24h)
+- Data validation and cleaning to ensure valid input for modeling
 
----
+### 2. Modeling & Evaluation
 
-## Data Structure
+- Models: Random Forest, Decision Trees (extensible design)
+- Baselines: Persistence (last value), seasonal (24h lag)
+- Backtesting:
+  - Expanding-window, one-step-ahead predictions
+  - Metrics: MAE, RMSE, relative improvement
+- MLflow for experiment tracking, comparison, and production model selection
 
-```bash 
-s3://bcn-noise-project/
-├── data/
-│   ├── raw/                  # Datos crudos (inmutables)
-│   │   ├── sensors/          # CSVs históricos de sensores
-│   │   └── traffic/          # Datos de tráfico externos
-│   ├── processed/            # Datos procesados (features)
-│   │   ├── v1/               # Versión 1 del feature engineering
-│   │   └── v2/               # Versión 2 (si hay cambios)
-│   └── splits/               # Particiones train/val/test
-│       ├── 2023-10-01/       # Fecha de creación
-│       │   ├── train/
-│       │   ├── val/
-│       │   └── test/
-│       └── 2023-11-01/
-│
-├── models/
-│   ├── experiments/          # Modelos de experimentación
-│   │   ├── xgboost/
-│   │   │   ├── 2023-10-01-12-00/  # Timestamp ejecución
-│   │   │   │   ├── model.tar.gz    # Modelo serializado
-│   │   │   │   ├── metrics.json    # RMSE, MAE, etc.
-│   │   │   │   └── hyperparams.json
-│   │   │   └── ...
-│   │   └── randomforest/
-│   ├── staging/              # Modelos candidatos a producción
-│   └── production/           # Modelos en producción
-│       ├── current/          # Versión activa
-│       └── archive/          # Versiones anteriores
-│
-├── config/
-│   ├── hyperparams/          # Hiperparámetros por modelo
-│   │   ├── xgboost_v1.json
-│   │   └── randomforest_v1.yaml
-│   └── features/             # Configuración de features
-│       ├── v1_features.txt
-│       └── v2_features.txt
-│
-├── scripts/                  # Código reproducible
-│   ├── preprocessing/
-│   ├── training/
-│   └── deployment/
-│
-└── logs/                     # Registros de ejecución
-    ├── training/
-    └── inference/
-```
+### 3. Serving & Visualization
 
-   - config/ (YAML config + loader)
-   - data/ (load, validate, preprocess)
-   - features/ (feature builders)
-   - models/ (train, tune, evaluate)
-   - tracking/ (MLflow helpers)
+- **FastAPI**: Serves real-time predictions and backtesting summaries
+- **Streamlit**: Visual interface for model forecasts and error diagnostics
+- Compatible with chat-based interfaces or voice-driven assistants
 
-### Run the simple pipeline
+### 4. Deployment & Automation
 
-This repository now includes a minimal, modular pipeline and local MLflow tracking.
-
-- Place raw CSV files under `data/raw/` (or set env var `BCN_DATA_RAW`).
-- Run the pipeline:
-
-```bash
-python run_pipeline.py
-```
-
-Outputs:
-- Artifacts (intermediate parquet, model) in `artifacts/`.
-- MLflow runs in `mlruns/` (open UI with `mlflow ui --backend-store-uri mlruns`).
-
-## Methodology
-
-1. **Time Series Forecasting**:
-   - Models: ARIMA, SARIMAX, Linear, Gradient Boosting, Random Forest, Decision Tree Regressors
-   - Metrics: RMSE, MAPE, R2
+- Containerized with Docker
+- CI/CD via GitHub Actions:
+  - Automatically builds and pushes Docker images to DockerHub
+  - Deploys to **Google Cloud Run** (cost-effective and scalable)
+- Also adaptable to AWS/Azure infrastructure
 
 ---
 
-## Results [ONGOING]
+## Results 
 
 - **Forecasts**: Predictive insights for future noise levels.
 - **COVID Impact**: Quantified noise reduction during restrictions.
@@ -129,7 +83,5 @@ Outputs:
 
 - Extend forecasting to all city sensors
 - Integrate external factors like traffic and weather.
-- Build an interactive dashboard for noise monitoring.
 
 ---
-
