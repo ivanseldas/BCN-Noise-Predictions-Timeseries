@@ -2,11 +2,11 @@
 
 **What if your ML model could hear the city and predict its next move?**  
 
-This project transforms real-time noise sensor data into short-term forecasts through a production-grade ML pipeline. Designed to support smart urban environments and guest-focused experiences, it combines robust time-series modeling with real-time APIs and dashboards.
+This project uses historical noise sensor data to forecast the city noise through a machine learning pipeline ready for production. The system makes real-time predictions via FastAPI, providing visual insights through a Streamlit dashboard.
 
 ![image](https://github.com/user-attachments/assets/b833be16-b936-4133-a35f-fc082f52df1f)
 
-### What this project delivers:
+### Project Overview:
 
 - Forecasting of real-world urban noise using engineered temporal features
 - Modular pipeline with MLflow for experiment tracking and model governance
