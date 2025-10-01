@@ -3,9 +3,59 @@ import argparse
 import importlib
 import mlflow
 import pandas as pd
+import numpy as np  # added
 from src.utils.paths import INTERIM_DIR, CONFIGS_DIR
 from src.features.feature_engineering import build_features_with_hash
 from src.evaluation.metrics import compute_backtest_metrics
+
+
+# -------------------------
+# Confidence Interval Helpers
+# -------------------------
+def _compute_ci_stats(y_true, y_pred, level=0.95):
+    """
+    Compute two types of per-point prediction intervals + coverage:
+    1) RMSE-based normal approximation (homoscedastic, symmetric)
+    2) Empirical residual quantiles (captures asymmetry)
+    Returns dict of coverage (%) and average width for both methods.
+    """
+    y_true = np.asarray(y_true)
+    y_pred = np.asarray(y_pred)
+    resid = y_true - y_pred
+    n = len(resid)
+    if n == 0:
+        return {}
+
+    alpha = 1 - level
+    z = 1.959964  # ~1.96
+
+    # --- RMSE-based ---
+    rmse = np.sqrt(np.mean(resid ** 2))
+    lower_rmse = y_pred - z * rmse
+    upper_rmse = y_pred + z * rmse
+    coverage_rmse = np.mean((y_true >= lower_rmse) & (y_true <= upper_rmse)) * 100.0
+    avg_width_rmse = float(np.mean(upper_rmse - lower_rmse))
+
+    # --- Empirical residual quantiles ---
+    # Fallback to rmse method if too few points
+    if n >= 30:
+        q_low = np.quantile(resid, alpha / 2)
+        q_high = np.quantile(resid, 1 - alpha / 2)
+        lower_emp = y_pred + q_low
+        upper_emp = y_pred + q_high
+        coverage_emp = np.mean((y_true >= lower_emp) & (y_true <= upper_emp)) * 100.0
+        avg_width_emp = float(np.mean(upper_emp - lower_emp))
+    else:
+        coverage_emp = None
+        avg_width_emp = None
+
+    return {
+        "ci_level": level,
+        "ci_95_coverage_rmse": float(coverage_rmse),
+        "ci_95_avg_width_rmse": avg_width_rmse,
+        "ci_95_coverage_empirical": float(coverage_emp) if coverage_emp is not None else None,
+        "ci_95_avg_width_empirical": avg_width_emp,
+    }
 
 
 # -------------------------
@@ -16,6 +66,7 @@ def run_backtest(model_module, X, y, params, n_splits=3, test_size=168*4):
     Expanding-window backtest.
     - n_splits: number of folds
     - test_size: length of each test window (e.g. 168 = one week of hourly data)
+    Adds confidence interval coverage & width metrics (RMSE-based + empirical).
     """
     all_metrics = []
     n_samples = len(y)
@@ -36,8 +87,14 @@ def run_backtest(model_module, X, y, params, n_splits=3, test_size=168*4):
             model = model_module.train(X_train, y_train, params)
             y_pred = model.predict(X_test)
 
-            # Compute metrics (includes baseline + improvement)
+            # Base metrics (includes baseline + improvement)
             metrics = compute_backtest_metrics(y_train, y_test, y_pred)
+
+            # Confidence interval stats
+            ci_stats = _compute_ci_stats(y_test, y_pred, level=0.95)
+            metrics.update(ci_stats)
+
+            # Log everything
             mlflow.log_metrics(metrics)
 
             all_metrics.append(metrics)
@@ -46,13 +103,15 @@ def run_backtest(model_module, X, y, params, n_splits=3, test_size=168*4):
                 f"[Backtest Fold {fold}] "
                 f"RMSE={metrics['rmse']:.3f} | "
                 f"Baseline RMSE={metrics['baseline_rmse']:.3f} | "
-                f"Improvement={metrics['rmse_improvement_pct']:.2f}%"
+                f"Improvement={metrics['rmse_improvement_pct']:.2f}% | "
+                f"CI95 Cover (RMSE)={metrics['ci_95_coverage_rmse']:.2f}%"
             )
 
     # Aggregate metrics across folds
     if all_metrics:
         avg_metrics = {
-            f"{k}": sum(m[k] for m in all_metrics) / len(all_metrics)
+            k: (sum(m[k] for m in all_metrics if m.get(k) is not None) / 
+                sum(1 for m in all_metrics if m.get(k) is not None))
             for k in all_metrics[0]
         }
         return all_metrics, avg_metrics

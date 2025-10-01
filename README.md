@@ -75,19 +75,21 @@ This project analyzes and forecasts noise levels in Barcelona, focusing on two m
 
 ---
 
-## Results 
+## Results & Business Impact
 
-- **Forecasts**: Predictive insights for future noise levels.
-- **COVID Impact**: Quantified noise reduction during restrictions.
+### Model Performance (Backtesting)
+- **RMSE:** 3.01 dB → ~70% lower error than the naive baseline (14.87 dB)
+- **MAE:** 1.19 dB → below the human perception threshold (~3 dB)
+- **sMAPE:** 1.75% | **MASE:** 0.80 → consistently better than persistence models
+- **Interval accuracy:** ~93–95% coverage on 95% confidence → reliable, with room to fine-tune
+
+![image](https://github.com/user-attachments/assets/f9915867-cdff-4484-93ae-87b0dab6c0fd)
+
+### Business Impact
+- Stable and low-error forecasts (~1.2 dB) across time, even during noise pattern shifts.
+- Outperforms baselines, enabling reliable detection of exceedances (e.g., >65 dB).
 
 ![image](https://github.com/user-attachments/assets/93c53fd7-30ea-4295-9168-a334f7c864b3)
-
----
-
-## Tools
-
-- **Programming**: Python (Pandas, NumPy, Statsmodels, Scikit-Learn).
-- **Visualization**: Folium, Matplotlib, Seaborn.
 
 ---
 
