@@ -1,6 +1,6 @@
 # BCN Noise Predictions Time Series
 
-**What if your ML model could hear the city and predict its next move?**  
+### What if your ML model could hear the city and predict its next move? 
 
 This project uses historical noise sensor data to forecast the city noise through a machine learning pipeline ready for production. The system makes real-time predictions via FastAPI, providing visual insights through a Streamlit dashboard.
 
