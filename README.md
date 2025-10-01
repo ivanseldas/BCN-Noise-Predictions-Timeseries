@@ -15,7 +15,7 @@ This project uses historical noise sensor data to forecast the city noise throug
 - CI/CD workflow with Docker and GitHub Actions, auto-deployed to **Google Cloud Run**
 - Built for cost-efficiency, observability, and portability across cloud platforms
 
-**Live Demo:** [Noise Forecasting App](https://noise-forecasting-frontend-924171883482.europe-west1.run.app/)
+**Live Demo:** [Noise Forecasting App: sensor 496](https://noise-forecasting-frontend-924171883482.europe-west1.run.app/)
 
 ![image](https://github.com/user-attachments/assets/0bb6c886-3ebd-4205-a828-84005ac59333)
 
