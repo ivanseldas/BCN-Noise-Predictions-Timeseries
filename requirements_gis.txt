@@ -1,8 +1,9 @@
 geopandas==1.0.1
 osmnx==1.9.3
-networkx==3.3
+networkx==3.2.1
 folium==0.17.0
 streamlit-folium==0.15.1
 shapely==2.0.4
+pyproj==3.6.1
 psycopg2-binary==2.9.9
-arcgis==2.1.0
+arcgis==2.1.0.3
