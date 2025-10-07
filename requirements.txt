@@ -10,3 +10,7 @@ plotly==5.18.0
 requests==2.31.0
 psutil==6.1.1
 xgboost==2.1.4
+
+arcgis==2.10.1
+geopandas==1.2.0
+urllib3==2.1.0
