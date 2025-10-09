@@ -1,94 +1,36 @@
 # src/gis/spatial_features.py
+"""
+Spatial features: compute distances from noise sensors to parks and main roads.
+"""
+
 import geopandas as gpd
-import pandas as pd
-from shapely.ops import nearest_points
-
-def sjoin_nearest_landuse(
-    sensors_gdf: gpd.GeoDataFrame,
-    landuse_gdf: gpd.GeoDataFrame,
-    landuse_col: str = "landuse_type"
-) -> gpd.GeoDataFrame:
-    """
-    Attach the nearest land use type to each sensor.
-
-    Args:
-        sensors_gdf: GeoDataFrame with sensor points.
-        landuse_gdf: GeoDataFrame with land use polygons.
-        landuse_col: Column in landuse_gdf containing land use labels.
-
-    Returns:
-        GeoDataFrame of sensors with 'landuse_type' and 'dist_landuse' columns.
-    """
-    sensors_gdf = sensors_gdf.to_crs(landuse_gdf.crs)
-    out = gpd.sjoin_nearest(
-        sensors_gdf,
-        landuse_gdf[[landuse_col, "geometry"]],
-        how="left",
-        distance_col="dist_landuse"
-    )
-    return out
+import osmnx as ox
+from shapely.ops import unary_union
 
 
-def distance_to_primary_roads(
-    sensors_gdf: gpd.GeoDataFrame,
-    edges_gdf: gpd.GeoDataFrame,
-    highway_levels: tuple = ("motorway", "trunk", "primary")
-) -> gpd.GeoDataFrame:
-    """
-    Compute distance from each sensor to the nearest major road.
+def load_osm_layers(place="Barcelona, Spain"):
+    """Download parks and road network layers from OpenStreetMap."""
+    ox.settings.use_cache = True
+    tags_green = {"leisure": ["park", "garden"], "landuse": ["grass", "forest"]}
+    gdf_green = ox.geometries_from_place(place, tags_green)
+    G = ox.graph_from_place(place, network_type="drive")
+    gdf_nodes, gdf_edges = ox.graph_to_gdfs(G)
+    return gdf_green, gdf_edges
 
-    Args:
-        sensors_gdf: GeoDataFrame of sensors.
-        edges_gdf: GeoDataFrame of road edges from OSMnx.
-        highway_levels: Road types considered 'major'.
 
-    Returns:
-        GeoDataFrame with 'dist_primary_m' column.
-    """
-    if "highway" not in edges_gdf.columns:
-        edges_gdf["highway"] = None
-
-    # Filter only major roads
-    prim = edges_gdf[
-        edges_gdf["highway"]
-        .astype(str)
-        .str.contains("|".join(highway_levels), case=False, na=False)
-    ]
-
+def add_distance_features(sensors_gdf, gdf_green, gdf_edges):
+    """Compute distance to nearest park and main road."""
     sensors_proj = sensors_gdf.to_crs(3857)
-    prim_proj = prim.to_crs(3857)
+    parks_proj = gdf_green.to_crs(3857)
+    roads_proj = gdf_edges.to_crs(3857)
 
-    # Compute distance to the union of major roads
-    prim_union = prim_proj.unary_union
-    sensors_proj["dist_primary_m"] = sensors_proj.geometry.distance(prim_union)
+    # --- Distance to parks
+    parks_union = unary_union(parks_proj.geometry)
+    sensors_proj["dist_to_park_m"] = sensors_proj.geometry.distance(parks_union)
 
-    return sensors_proj.to_crs(sensors_gdf.crs)
+    # --- Distance to main roads
+    major = roads_proj[roads_proj["highway"].astype(str).str.contains("motorway|primary|trunk", na=False)]
+    major_union = unary_union(major.geometry)
+    sensors_proj["dist_to_mainroad_m"] = sensors_proj.geometry.distance(major_union)
 
-
-def local_noise_mean(
-    sensors_gdf: gpd.GeoDataFrame,
-    radius_m: float = 100.0,
-    value_col: str = "noise_pred"
-) -> gpd.GeoDataFrame:
-    """
-    Compute local mean of a value within a given radius.
-
-    Args:
-        sensors_gdf: GeoDataFrame with sensor points.
-        radius_m: Radius (in meters) for neighborhood search.
-        value_col: Column whose local mean will be computed.
-
-    Returns:
-        GeoDataFrame with new column '{value_col}_local_mean_<radius>m'.
-    """
-    sensors_proj = sensors_gdf.to_crs(3857)
-    tree = sensors_proj.sindex
-
-    vals = []
-    for geom in sensors_proj.geometry:
-        buffer = geom.buffer(radius_m)
-        neighbors_idx = list(tree.query(buffer, predicate="intersects"))
-        vals.append(sensors_proj.iloc[neighbors_idx][value_col].mean())
-
-    sensors_gdf[f"{value_col}_local_mean_{int(radius_m)}m"] = vals
-    return sensors_gdf
+    return sensors_proj.to_crs(4326)

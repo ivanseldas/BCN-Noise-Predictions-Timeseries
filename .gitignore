@@ -3,18 +3,24 @@ mlruns/
 data/raw/
 data/interim/
 data/processed/
+data/gis_layers/
 
 # Python cache
 __pycache__/
 *.py[cod]
 *.pyo
+*.pyc
 
 # venvs
 .venv/
 venv/
 env/
 .env
+secrets/
 
 # files
 feature_config.json
 new_readme.txt
+
+# cache
+cache/
