@@ -42,7 +42,7 @@ The **geospatial workflow** forms the core of the project, enriching each sensor
 - Comparison of predicted vs. observed hotspots for model validation  
 
 **ArcGIS Online Map:** [Noise Hotspot Analysis](https://arcg.is/1Du8bG3)
-![bcn-noise-hotspot-map](image-1.png)
+<img width="1862" height="936" alt="image" src="https://github.com/user-attachments/assets/b2967a08-6627-460a-83c5-7ff2973771e7" />
 *ArcGIS Online Noise Hotspot Map*
 
 ---
