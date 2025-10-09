@@ -1,19 +1,20 @@
-# BCN Noise Predictions Time Series
+# Urban Noise Forecasting - Barcelona
 
 ### What if your ML model could hear the city and predict its next move? 
 
-This project uses historical noise sensor data to forecast the city noise through a machine learning pipeline ready for production. The system makes real-time predictions via FastAPI, providing visual insights through a Streamlit dashboard.
+This project builds a **spatio-temporal forecasting system** that predicts **urban noise** in Barcelona by combining **machine learning** with **geospatial analysis**.  
+It integrates **ArcGIS, GeoPandas, and NetworkX** to engineer spatial context features (roads, parks, network centrality), allowing the model to “understand” the city’s physical structure before making predictions.
+
 
 ![image](https://github.com/user-attachments/assets/b833be16-b936-4133-a35f-fc082f52df1f)
 
 ### Project Overview:
 
-- Forecasting of real-world urban noise using engineered temporal features
-- Modular pipeline with MLflow for experiment tracking and model governance
-- Time-aware backtesting with expanding window evaluation and baseline comparisons
-- FastAPI service for real-time predictions, and Streamlit dashboard for insights
-- CI/CD workflow with Docker and GitHub Actions, auto-deployed to **Google Cloud Run**
-- Built for cost-efficiency, observability, and portability across cloud platforms
+**Objective:** Forecast urban noise patterns and identify potential exceedances (> 65 dB) before they occur.  
+- **Approach:** Combine **temporal forecasting models** with **geospatial context layers** to improve prediction accuracy.  
+- **Scale:** Over **135 M sensor records** processed and stored in a **BigQuery + Cloud Storage** data lake.  
+- **Stack:** Python (GeoPandas, Shapely, ArcGIS API, NetworkX, MLflow), Docker, GitHub Actions, Google Cloud Run.  
+
 
 **Live Demo:** [Noise Forecasting App: sensor 496](https://noise-forecasting-frontend-924171883482.europe-west1.run.app/)
 
@@ -21,17 +22,28 @@ This project uses historical noise sensor data to forecast the city noise throug
 
 ---
 
-## Objectives
+## Geospatial Analysis & Feature Engineering
 
-This project analyzes and forecasts noise levels in Barcelona, focusing on two main objectives:
+The **geospatial workflow** forms the core of the project, enriching each sensor with **urban context** before feeding data into the forecasting model.
 
-   1. Predict future noise levels using historical data.
+### Spatial Context Layers
+- Distance to **main roads**, **green areas**, and **transport corridors** using **GeoPandas** + **Shapely**  
+- Street-network **betweenness centrality** with **NetworkX** + **OSMnx**  
+- Local noise environment: neighborhood mean / variance within **150 m buffers**  
+- Integration of all spatial features into a unified **GeoDataFrame** exported to the ML pipeline  
 
-![image](https://github.com/user-attachments/assets/d60656c2-34c5-4312-8e2b-05163c169e7e)
+### GIS Processing
+- Automated spatial joins and geometry operations via **ArcPy** and **ArcGIS API for Python**  
+- Publication of **geospatial layers** and **forecasted exceedances** as interactive **ArcGIS Online** maps  
+- Visualization of predicted hot zones across Barcelona districts  
 
-   2. Address the impact of COVID-19 lockdown on noise trends.
+### Hotspot & Spatial Statistics
+- Detection of emerging noise clusters via **Getis-Ord Gi\*** hotspot analysis and **Moran’s I** autocorrelation in **ArcGIS**  
+- Comparison of predicted vs. observed hotspots for model validation  
 
-![image](https://github.com/user-attachments/assets/3d5b70ac-ebb1-441a-8cb6-d317e3c5c141)
+**ArcGIS Online Map:** [Noise Hotspot Analysis](https://arcg.is/1Du8bG3)
+![bcn-noise-hotspot-map](image-1.png)
+*ArcGIS Online Noise Hotspot Map*
 
 ---
 
