@@ -41,7 +41,7 @@ The **geospatial workflow** forms the core of the project, enriching each sensor
 - Detection of emerging noise clusters via **Getis-Ord Gi\*** hotspot analysis and **Moran’s I** autocorrelation in **ArcGIS**  
 - Comparison of predicted vs. observed hotspots for model validation  
 
-**ArcGIS Online Map:** [Noise Hotspot Analysis](https://arcg.is/0iHq0D)
+**ArcGIS Online Map:** [Noise Hotspot Analysis](https://www.arcgis.com/apps/mapviewer/index.html?webmap=4f750487d9a94adaad95050e69ac0411&center=2.170186%2C41.398435&level=13)
 <img width="1862" height="936" alt="image" src="https://github.com/user-attachments/assets/b2967a08-6627-460a-83c5-7ff2973771e7" />
 *ArcGIS Online Noise Hotspot Map*
 
